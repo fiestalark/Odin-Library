@@ -93,6 +93,8 @@ button[type="submit"]:hover {
 
 .row {
     padding: 1rem;
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid #e5e7eb;
 }
 .add {
@@ -101,12 +103,26 @@ button[type="submit"]:hover {
 .add:hover {
     background-color: lightgreen;
 }
+.read {
+    cursor: pointer;
+}
+.read-flash {
+    transition: all 0.3s ease;
+}
+
+.read-flash.active {
+    background-color: #90EE90;  /* Light green */
+    color: #006400;  /* Dark green */
+}
 #remove-book {
     background-color: lightcoral;
     border-radius: 8px;
     border: none;
-    height: 2rem;
-    width: 6rem;
+    height: 2.5rem;
+    width: 8rem;
+}
+#remove-book:hover {
+    background-color: rgb(220, 92, 92);
 }
 
 @media (max-width: 768px) {

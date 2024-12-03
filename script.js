@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gridContainer = document.querySelector('.grid-container')
     const booksTable = document.querySelector('.books');
-    const submitBtn = document.querySelector('#submit');
-    const form = document.querySelector('form');
     const addBookBtn = document.querySelector('.add');
 
-    const myLibrary = [];
-
+    const myLibrary = [
+        new Book('The Great Gatsby', 'F. Scott Fitzgerald', 180, true),
+        new Book('1984', 'George Orwell', 328, false)
+    ];
+    
     function Book(title, author, pages, read) {
         this.title = title;
         this.author = author;
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const readYet = this.read ? 'read' : 'not read yet';
             return `${this.name} by ${this.author}, ${this.pages} pages, ${readYet}`
         };
+        this.markAsRead = function() { this.read = !this.read };
     }
 
     const getFormData = (form) => {
@@ -80,34 +82,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const removeBook = (index) => {
+        myLibrary.splice(index, 1);
+        displayBooks();
+    };
+
     const displayBooks = () => {
         booksTable.innerHTML = '';
-        myLibrary.forEach(book => {
-            const data = [book.title, book.author, book.pages, book.read ? 'Yes' : 'No'].map(content => {
+        myLibrary.forEach((book, index) => {
+            const properties = ['title', 'author', 'pages', 'read'];
+            const data = [book.title, book.author, book.pages, book.read ? 'Yes' : 'No'].map((content, i) => {
                 const div = document.createElement('div');
                 div.textContent = content;
                 div.classList.add('row');
+                div.classList.add(properties[i]);
+                div.dataset.index = index;
+
+                if (properties[i] === 'read') {
+                    div.classList.add('read-flash');
+                    div.addEventListener('click', () => {
+                        myLibrary[index].markAsRead();
+                        div.textContent = myLibrary[index].read ? 'Yes' : 'No';
+                        div.classList.add('active');
+                        setTimeout(() => {
+                            div.classList.remove('active');
+                        }, 300);
+                    });
+                }
+
                 return div;
             });
 
             data.forEach(div => booksTable.appendChild(div));
+            const removeDiv = document.createElement('div');
+            removeDiv.classList.add('row');
             const removeBtn = document.createElement('button');
             removeBtn.id = 'remove-book';
-            removeBtn.classList.add('row');
-            booksTable.appendChild(removeBtn);
+            removeBtn.textContent = 'Remove';
+            removeDiv.appendChild(removeBtn);
+            booksTable.appendChild(removeDiv);
+
+            removeBtn.addEventListener('click', () => {
+                removeBook(index);
+            })
         })
     };
-
 
     function addBookToLibrary(title, author, pages, read) {
         const newBook = new Book(title, author, pages, read);
         myLibrary.push(newBook);
     }
 
-
-
     addBookBtn.addEventListener('click', () => {
         addBook();
     })
+
+displayBooks();
 
 });
